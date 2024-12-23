@@ -1,0 +1,10 @@
+U:\try\try\bin\Debug\@try.exe.config
+U:\try\try\bin\Debug\@try.exe
+U:\try\try\bin\Debug\@try.pdb
+U:\try\try\obj\Debug\try.csproj.AssemblyReference.cache
+U:\try\try\obj\Debug\try.Form1.resources
+U:\try\try\obj\Debug\try.Properties.Resources.resources
+U:\try\try\obj\Debug\try.csproj.GenerateResource.cache
+U:\try\try\obj\Debug\try.csproj.CoreCompileInputs.cache
+U:\try\try\obj\Debug\@try.exe
+U:\try\try\obj\Debug\@try.pdb
