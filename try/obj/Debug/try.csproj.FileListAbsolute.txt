@@ -8,3 +8,13 @@ U:\try\try\obj\Debug\try.csproj.GenerateResource.cache
 U:\try\try\obj\Debug\try.csproj.CoreCompileInputs.cache
 U:\try\try\obj\Debug\@try.exe
 U:\try\try\obj\Debug\@try.pdb
+C:\Users\ALTHOURAYA\source\repos\Simple-Compiler-\try\obj\Debug\try.csproj.AssemblyReference.cache
+C:\Users\ALTHOURAYA\source\repos\Simple-Compiler-\try\obj\Debug\try.Form1.resources
+C:\Users\ALTHOURAYA\source\repos\Simple-Compiler-\try\obj\Debug\try.Properties.Resources.resources
+C:\Users\ALTHOURAYA\source\repos\Simple-Compiler-\try\obj\Debug\try.csproj.GenerateResource.cache
+C:\Users\ALTHOURAYA\source\repos\Simple-Compiler-\try\obj\Debug\try.csproj.CoreCompileInputs.cache
+C:\Users\ALTHOURAYA\source\repos\Simple-Compiler-\try\obj\Debug\@try.exe
+C:\Users\ALTHOURAYA\source\repos\Simple-Compiler-\try\obj\Debug\@try.pdb
+C:\Users\ALTHOURAYA\source\repos\Simple-Compiler-\try\bin\Debug\@try.exe.config
+C:\Users\ALTHOURAYA\source\repos\Simple-Compiler-\try\bin\Debug\@try.exe
+C:\Users\ALTHOURAYA\source\repos\Simple-Compiler-\try\bin\Debug\@try.pdb

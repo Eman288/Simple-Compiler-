@@ -31,6 +31,8 @@
             this.button1 = new System.Windows.Forms.Button();
             this.code = new System.Windows.Forms.TextBox();
             this.token = new System.Windows.Forms.TextBox();
+            this.assignment = new System.Windows.Forms.TextBox();
+            this.Expression = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // button1
@@ -51,21 +53,44 @@
             this.code.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.code.Size = new System.Drawing.Size(218, 246);
             this.code.TabIndex = 1;
+            this.code.TextChanged += new System.EventHandler(this.code_TextChanged);
             // 
             // token
             // 
-            this.token.Location = new System.Drawing.Point(12, 73);
+            this.token.Location = new System.Drawing.Point(3, 12);
             this.token.Multiline = true;
             this.token.Name = "token";
             this.token.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.token.Size = new System.Drawing.Size(434, 329);
+            this.token.Size = new System.Drawing.Size(434, 153);
             this.token.TabIndex = 2;
+            // 
+            // assignment
+            // 
+            this.assignment.Location = new System.Drawing.Point(3, 329);
+            this.assignment.Multiline = true;
+            this.assignment.Name = "assignment";
+            this.assignment.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.assignment.Size = new System.Drawing.Size(434, 61);
+            this.assignment.TabIndex = 3;
+            this.assignment.TextChanged += new System.EventHandler(this.assignment_TextChanged);
+            // 
+            // Expression
+            // 
+            this.Expression.Location = new System.Drawing.Point(3, 202);
+            this.Expression.Multiline = true;
+            this.Expression.Name = "Expression";
+            this.Expression.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.Expression.Size = new System.Drawing.Size(434, 61);
+            this.Expression.TabIndex = 4;
+            this.Expression.TextChanged += new System.EventHandler(this.Expression_TextChanged);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.Expression);
+            this.Controls.Add(this.assignment);
             this.Controls.Add(this.token);
             this.Controls.Add(this.code);
             this.Controls.Add(this.button1);
@@ -81,6 +106,8 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.TextBox code;
         private System.Windows.Forms.TextBox token;
+        private System.Windows.Forms.TextBox assignment;
+        private System.Windows.Forms.TextBox Expression;
     }
 }
 
