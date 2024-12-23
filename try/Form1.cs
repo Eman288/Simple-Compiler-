@@ -15,14 +15,27 @@ namespace @try
     {
         List<(string, string)> realTokens = new List<(string, string)>();
         int index = 0;
+        string ParseTree = "";
         public Form1()
         {
             InitializeComponent();
+            assignment.ReadOnly = true;
+            Expression.ReadOnly = true;
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             GetToken(code.Text);
+            bool somethingWrong;
+            ParseTree = "";
+            bool expIsRight;
+            ParseTree += "<expression> => ";
+            Expression.Text = ParseExpression(out expIsRight);
+            ParseTree += $"{Environment.NewLine}";
+            index = 0;
+            realTokens = new List<(string, string)>();
+            assignment.Text = ParseAssignment(out somethingWrong);
+
         }
 
         static List<(string, string)> MakeTokens(string line)
@@ -96,32 +109,10 @@ namespace @try
 
         private void assignment_TextChanged(object sender, EventArgs e)
         {
-            // Temporarily unsubscribe to prevent infinite loop
-            assignment.TextChanged -= assignment_TextChanged;
-
-            bool somethingWrong;
-            string parsedAssignment = ParseAssignment(out somethingWrong);
-
-            // Update the text box with the parsed result
-            assignment.Text = parsedAssignment;
-
-            // Re-subscribe to the event
-            assignment.TextChanged += assignment_TextChanged;
         }
 
         private void Expression_TextChanged(object sender, EventArgs e)
         {
-            // Temporarily unsubscribe to prevent infinite loop
-            Expression.TextChanged -= Expression_TextChanged;
-
-            bool expIsRight;
-            string parsedExpression = ParseExpression(out expIsRight);
-
-            // Update the text box with the parsed result
-            Expression.Text = parsedExpression;
-
-            // Re-subscribe to the event
-            Expression.TextChanged += Expression_TextChanged;
         }
 
         // parse functions
@@ -139,6 +130,7 @@ namespace @try
                     )
                 {
                     op = realTokens[index].Item2;
+                    //ParseTree += $"\n <OPERATOR> => ${realTokens[index].Item1}\n${realTokens[index].Item1} => ${realTokens[index].Item2}\n";
                 }
                 else if (
                     realTokens[index].Item2 == ">"
@@ -160,15 +152,25 @@ namespace @try
             termIsRight = true;
             string term = "";
             // ("Ident", "value")
-            if (realTokens[index].Item1 == "IDENT" || realTokens[index].Item1 == "NUM")
+            if (index < realTokens.Count)
             {
-                term = realTokens[index].Item2;
+                if (realTokens[index].Item1 == "IDENT" || realTokens[index].Item1 == "NUM")
+                {
+                    term = realTokens[index].Item2;
+                    //ParseTree += $"\n <term> => ${realTokens[index].Item1}\n${realTokens[index].Item1} => ${realTokens[index].Item2}\n";
+                }
+                else
+                {
+                    termIsRight = false;
+                    term = "Wrong Term";
+                }
             }
             else
             {
+                term = "Missing Term";
                 termIsRight = false;
-                term = "Wrong Term";
             }
+            
             return term;
         }
 
@@ -200,6 +202,7 @@ namespace @try
             {
                 index += 1;
                 code += term;
+                ParseTree += "<term>";
             }
 
             // check if the next token is an operator or not
@@ -212,6 +215,7 @@ namespace @try
                     {
                         code += op;
                         index += 1;
+                        ParseTree += $"<operator> <expression>{Environment.NewLine}<expression> => ";
                         code += ParseExpression(out expIsRight);
                     }
                     else
@@ -249,7 +253,7 @@ namespace @try
 somethingWrong = true;
 
 
-return ("ddd");
+return ParseTree;
 }
 
 }
