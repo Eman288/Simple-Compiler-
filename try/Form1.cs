@@ -19,41 +19,40 @@ namespace @try
         public Form1()
         {
             InitializeComponent();
-            assignment.ReadOnly = true;
+            Parse.ReadOnly = true;
             Expression.ReadOnly = true;
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             GetToken(code.Text);
-            bool somethingWrong;
+            bool declareIsRight;
             ParseTree = "";
             bool expIsRight;
-            ParseTree += "<expression> => ";
-            Expression.Text = ParseExpression(out expIsRight);
+            Expression.Text = Condition(out expIsRight);
+            //assignment.Text = ParseDeclaration(out declareIsRight);
             ParseTree += $"{Environment.NewLine}";
             index = 0;
             realTokens = new List<(string, string)>();
-            assignment.Text = ParseAssignment(out somethingWrong);
+            Parse.Text = ParseTree;
 
         }
-
         static List<(string, string)> MakeTokens(string line)
         {
             var tokenPatterns = new Dictionary<string, string>
-            {
-                { "KEYWORD", @"\b(اذا|طالما|متغير)\b" },
-                { "IDENT", @"[a-zA-Z\u0600-\u06FF][a-zA-Z0-9\u0600-\u06FF]*" },
-                { "NUM", @"\b\d+\b" },
-                { "OPERATOR", @"[+\-*/=<>!]+" },
-                { "ASSIGN", @"=" },
-                { "LPAREN", @"\(" },
-                { "RPAREN", @"\)" },
-                { "LBRACE", @"\{" },
-                { "RBRACE", @"\}" },
-                { "SEMICOLON", @";" },
-                { "WS", @"\s+" }
-            };
+    {
+        { "KEYWORD", @"\b(اذا|طالما|متغير)\b" },
+        { "IDENT", @"[a-zA-Z\u0600-\u06FF][a-zA-Z0-9\u0600-\u06FF]*" },
+        { "NUM", @"\b\d+\b" },
+        { "OPERATOR", @"(<=|>=|==|!=|<|>|[+\-*/])" },
+        { "ASSIGN", @"=" },
+        { "LPAREN", @"\(" },
+        { "RPAREN", @"\)" },
+        { "LBRACE", @"\{" },
+        { "RBRACE", @"\}" },
+        { "SEMICOLON", @";" },
+        { "WS", @"\s+" }
+    };
 
             var tokenRegex = new Regex(string.Join("|", tokenPatterns.Select(kvp =>
                 $"(?<{kvp.Key}>{kvp.Value})"
@@ -69,7 +68,7 @@ namespace @try
                 {
                     if (match.Groups[kvp].Success)
                     {
-                        if (kvp != "WHITESPACE")  // Skip whitespace
+                        if (kvp != "WS")  // Skip whitespace
                         {
                             tokens.Add((kvp, match.Value));
                         }
@@ -80,7 +79,6 @@ namespace @try
 
             return tokens;
         }
-
 
         void GetToken(string s)
         {
@@ -135,8 +133,8 @@ namespace @try
                 else if (
                     realTokens[index].Item2 == ">"
                     || realTokens[index].Item2 == "<"
-                    || realTokens[index].Item2 == "=<"
-                    || realTokens[index].Item2 == "=>"
+                    || realTokens[index].Item2 == "<="
+                    || realTokens[index].Item2 == ">="
                     || realTokens[index].Item2 == "=="
                     || realTokens[index].Item2 == "!="
                     )
@@ -174,6 +172,61 @@ namespace @try
             return term;
         }
 
+
+        /**
+         * 
+         * x = 6)
+         */
+
+
+
+        string Condition(out bool condIsRight)
+        {
+            // Condition rule
+            /*
+             * <condition> → <expression> <relational_operator>
+                <expression>
+             */
+            ParseTree += $"{Environment.NewLine}<condition> → <expression> <relational_operator> <expression>{Environment.NewLine}";
+            condIsRight = true;
+            string cond = "";
+            bool expIsRight, opIsRight;
+            string c;
+            ParseTree += $"<expression> → ";
+            c = ParseExpression(out expIsRight);
+            if (expIsRight)
+            {
+                cond += c;
+                string op = Operator(out opIsRight);
+                index += 1;
+                if (opIsRight == false) // it is a relational operator
+                {
+                    cond += op;
+                    ParseTree += $"{Environment.NewLine}<expression> → ";
+                    c = ParseExpression(out expIsRight);
+                    if (expIsRight)
+                    {
+                        cond += c;
+                    }
+                    else
+                    {
+                        cond = "Wrong in condition, expression is wrong" +
+                                $"{Environment.NewLine}Problem: {c}";
+                    }
+                }
+                else
+                {
+                    cond = "Wrong in condition, operator is wrong" +
+                        $"{Environment.NewLine}Problem: {op} is not a relational operator";
+                }
+            }
+            else
+            {
+                cond = "Wrong in condition, expression is wrong" +
+                    $"{Environment.NewLine}Problem: {c}";
+            }
+            return cond;
+        }
         string ParseExpression(out bool expIsRight)
         {
             // Expression rule
@@ -216,45 +269,185 @@ namespace @try
                         code += op;
                         index += 1;
                         ParseTree += $"<operator> <expression>{Environment.NewLine}<expression> => ";
-                        code += ParseExpression(out expIsRight);
+                        string s = ParseExpression(out expIsRight);
+                        if (expIsRight)
+                        {
+                            code += s;
+                        }
+                        else
+                        {
+
+                            return code;
+                        }
                     }
                     else
                     {
-                        index -= 1;
                         return code;
                     }    
                 }
-                else if (realTokens[index].Item1 == "SEMICOLON")
+                else if (
+                    realTokens[index].Item1 == "SEMICOLON" 
+                    || realTokens[index].Item1 == "RPAREN"
+                    || realTokens[index].Item1 == "ASSIGN"
+                    )
                 {
-                    index -= 1;
                     return code;
                 }
                 else
                 {
                     expIsRight = false;
-                    code = "Wrong Expression";
                     return code;
                 }
             }
             else 
             {
+                expIsRight = false;
                 code = "Wrong Syntax, the index is wrong";   
             }
 
             return code;
         }
 
-        string ParseAssignment( out bool somethingWrong)
+        string ParseAssignment( out bool assignIsRight)
         {
             // assignment rule
             /*
                 *  <assignment> → IDENT = <expression> ;
              */
-somethingWrong = true;
+            ParseTree += $"<assignment> → IDENT = <expression> ;{Environment.NewLine}";
+            assignIsRight = true;
+            bool expIsRight;
+            string assign = "";
+            if (realTokens[index].Item1 == "IDENT")
+            {
+                assign += realTokens[index].Item2;
+                index += 1;
+                if (realTokens[index].Item1 == "ASSIGN")
+                {
+                    assign += realTokens[index].Item2;
+                    index += 1;
+                    ParseTree += $"<expression> → ";
+                    string check = ParseExpression(out expIsRight);
+                    if (expIsRight)
+                    {
+                        assign += check;
+                        if (index < realTokens.Count && realTokens[index].Item1 == "SEMICOLON")
+                        {
+                            assign += realTokens[index].Item2;
+                            index += 1;
+                            return assign;
+                        }
+                        else
+                        {
+                            assign = "Missing Semicolon";
+                            return assign;
+                        }
+                    }
+                    else
+                    {
+                        if (index >= realTokens.Count || realTokens[index].Item1 != "SEMICOLON")
+                        {
+                            assign = "Missing Semicolon";
+                        }
+                        else
+                        {
+                            assign = "Wrong in expression in assignment";
+                        }
+                    }
+                }
+                else
+                {
+                    assignIsRight = false;
+                    assign = "Assign is wrong, missing '=' ";
+                    return assign;
+                }
+            }
+            else
+            {
+                assignIsRight = false;
+                assign = "Assign is wrong, missing identifier";
+                return assign;
+            }    
 
-
-return ParseTree;
+            return assign;
 }
 
-}
+        string ParseDeclaration(out bool declareIsRight)
+        {
+            // assignment rule
+            /*
+                *  <declaration> → متغير IDENT = <expression> ;
+             */
+            ParseTree += $"<declaration> → متغير IDENT = <expression> ;{Environment.NewLine}";
+            declareIsRight = true;
+            bool expIsRight;
+            string declare = "";
+            if (realTokens[index].Item1 == "KEYWORD")
+            {
+                declare += realTokens[index].Item2;
+                index += 1;
+                if (realTokens[index].Item1 == "IDENT")
+                {
+                    declare += realTokens[index].Item2;
+                    index += 1;
+                    if (realTokens[index].Item1 == "ASSIGN")
+                    {
+                        declare += realTokens[index].Item2;
+                        index += 1;
+                        ParseTree += $"<expression> → ";
+                        string check = ParseExpression(out expIsRight);
+                        Expression.Text = check + $"  ${expIsRight}";
+                        if (expIsRight)
+                        {
+                            declare += check;
+                            if (index < realTokens.Count && realTokens[index].Item1 == "SEMICOLON")
+                            {
+                                declare += realTokens[index].Item2;
+                                index += 1;
+                                return declare;
+                            }
+                            else
+                            {
+                                declare = "Missing Semicolon";
+                                return declare;
+                            }
+                        }
+                        else
+                        {
+                            if (index >= realTokens.Count || realTokens[index].Item1 != "SEMICOLON")
+                            {
+                                declare = "Missing Semicolon";
+                            }
+                            else
+                            {
+                                declare = "Wrong in expression in declaration";
+                            }
+                        }
+                    }
+                    else
+                    {
+                        declareIsRight = false;
+                        declare = "Assign is wrong, missing '=' ";
+                        return declare;
+                    }
+                }
+                else
+                {
+                    declareIsRight = false;
+                    declare = "declare is wrong, missing identifier";
+                    return declare;
+                }
+            }
+            else
+            {
+                declareIsRight = false;
+                declare = "declare is wrong, missing keyword";
+                return declare;
+            }
+            
+
+            return declare;
+        }
+
+    }
 }

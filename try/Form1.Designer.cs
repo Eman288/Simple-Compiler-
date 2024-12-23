@@ -31,8 +31,9 @@
             this.button1 = new System.Windows.Forms.Button();
             this.code = new System.Windows.Forms.TextBox();
             this.token = new System.Windows.Forms.TextBox();
-            this.assignment = new System.Windows.Forms.TextBox();
+            this.Parse = new System.Windows.Forms.TextBox();
             this.Expression = new System.Windows.Forms.TextBox();
+            this.assignment = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // button1
@@ -64,15 +65,15 @@
             this.token.Size = new System.Drawing.Size(434, 153);
             this.token.TabIndex = 2;
             // 
-            // assignment
+            // Parse
             // 
-            this.assignment.Location = new System.Drawing.Point(3, 329);
-            this.assignment.Multiline = true;
-            this.assignment.Name = "assignment";
-            this.assignment.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.assignment.Size = new System.Drawing.Size(434, 61);
-            this.assignment.TabIndex = 3;
-            this.assignment.TextChanged += new System.EventHandler(this.assignment_TextChanged);
+            this.Parse.Location = new System.Drawing.Point(3, 377);
+            this.Parse.Multiline = true;
+            this.Parse.Name = "Parse";
+            this.Parse.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.Parse.Size = new System.Drawing.Size(434, 61);
+            this.Parse.TabIndex = 3;
+            this.Parse.TextChanged += new System.EventHandler(this.assignment_TextChanged);
             // 
             // Expression
             // 
@@ -84,13 +85,23 @@
             this.Expression.TabIndex = 4;
             this.Expression.TextChanged += new System.EventHandler(this.Expression_TextChanged);
             // 
+            // assignment
+            // 
+            this.assignment.Location = new System.Drawing.Point(3, 286);
+            this.assignment.Multiline = true;
+            this.assignment.Name = "assignment";
+            this.assignment.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.assignment.Size = new System.Drawing.Size(434, 61);
+            this.assignment.TabIndex = 5;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.Expression);
             this.Controls.Add(this.assignment);
+            this.Controls.Add(this.Expression);
+            this.Controls.Add(this.Parse);
             this.Controls.Add(this.token);
             this.Controls.Add(this.code);
             this.Controls.Add(this.button1);
@@ -106,8 +117,9 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.TextBox code;
         private System.Windows.Forms.TextBox token;
-        private System.Windows.Forms.TextBox assignment;
+        private System.Windows.Forms.TextBox Parse;
         private System.Windows.Forms.TextBox Expression;
+        private System.Windows.Forms.TextBox assignment;
     }
 }
 
