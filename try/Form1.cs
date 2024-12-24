@@ -171,15 +171,6 @@ namespace @try
             
             return term;
         }
-
-
-        /**
-         * 
-         * x = 6)
-         */
-
-
-
         string Condition(out bool condIsRight)
         {
             // Condition rule
@@ -226,6 +217,17 @@ namespace @try
                     $"{Environment.NewLine}Problem: {c}";
             }
             return cond;
+        }
+        string Statement(out bool stIsRight)
+        {
+            // statement rule
+            /*
+             * <statement> → <declaration> | <assignment> |
+                            <if_statement> | <while_statement>
+             */
+            string st = "";
+            stIsRight = true;
+            return st;
         }
         string ParseExpression(out bool expIsRight)
         {
@@ -553,12 +555,128 @@ namespace @try
              * <if_statement> → اذا>) condition>) {<statement_list>}
              */
             ifIsRight = true;
-            return " f";
+            bool conIsRight, stIsRight;
+            string ifcode = "";
+            if (index < realTokens.Count && realTokens[index].Item1 == "KEYWORD")
+            {
+                ifcode += realTokens[index].Item2;
+                index += 1;
+                if (index < realTokens.Count && realTokens[index].Item1 == "LPAREN")
+                {
+                    ifcode += realTokens[index].Item2;
+                    index += 1;
+                    string con = Condition(out conIsRight);
+                    if (conIsRight)
+                    {
+                        ifcode += con;
+                        if (index < realTokens.Count && realTokens[index].Item1 == "RPAREN")
+                        {
+                            ifcode += realTokens[index].Item2;
+                            index += 1;
+                            if (index < realTokens.Count && realTokens[index].Item1 == "LBRACE")
+                            {
+                                ifcode += realTokens[index].Item2;
+                                index += 1;
+
+                                string st = ParseStatementList(out stIsRight);
+                                if (stIsRight)
+                                {
+                                    ifcode += st;
+                                    if (index < realTokens.Count && realTokens[index].Item1 == "RBRACE")
+                                    {
+                                        ifcode += realTokens[index].Item2;
+                                        index += 1;
+                                        return ifcode;
+                                    }
+                                    else
+                                    {
+                                        ifIsRight = false;
+                                        ifcode = $"Wrong in if statment{Environment.NewLine}" +
+                                        $"Problem: Missing RBRACE";
+                                    }
+                                }
+                                else
+                                {
+                                    ifIsRight = false;
+                                    ifcode = $"Wrong in if statment{Environment.NewLine}" +
+                                            $"Problem: {st}";
+                                }
+                            }
+                            else
+                            {
+                                ifIsRight = false;
+                                ifcode = $"Wrong in if statment{Environment.NewLine}" +
+                                $"Problem: Missing LBRACE";
+                            }
+                        }
+                        else
+                        {
+                            ifIsRight = false;
+                            ifcode = $"Wrong in if statment{Environment.NewLine}" +
+                                $"Problem: Missing RPAREN";
+                        }
+                    }
+                    else
+                    {
+                        ifIsRight = false;
+                        ifcode = $"Wrong in if statment{Environment.NewLine}" +
+                            $"Problem: {con}";
+                    }
+                }
+                else
+                {
+                    ifIsRight = false;
+                    ifcode = $"Wrong in if statment{Environment.NewLine}" +
+                         $"Problem: Missing LPAREN";
+                }
+            }
+            else
+            {
+                ifIsRight = false;
+                ifcode = $"Wrong in if statment{Environment.NewLine}" +
+                    $"Problem: Missing Keyword";
+            }
+            return ifcode;
         }
         string ParseStatementList(out bool stateListIsRight)
         {
+            // statementList Rule
+            /*
+             * <statement_list> → <statement> <statement_list> | ε
+             */
             stateListIsRight = true;
-            return " f";
+            string statementListCode = "";
+            bool stIsRight;
+            string st = Statement(out stIsRight);
+            if (stIsRight)
+            {
+                statementListCode += st;
+                if (index < realTokens.Count)
+                {
+                    string s = ParseStatementList(out stateListIsRight);
+                    if (stateListIsRight)
+                    {
+                        statementListCode += s;
+                    }
+                    else
+                    {
+                        stateListIsRight = false;
+                        statementListCode = $"Wrong in statement List{Environment.NewLine}" +
+                                        $"Problem: {s}";
+                    }
+                }
+                else
+                {
+                    return statementListCode;
+                }
+            }
+            else
+            {
+                stateListIsRight = false;
+                statementListCode = $"Wrong in statement List{Environment.NewLine}" +
+                                $"Problem: {st}";
+            }
+            return statementListCode;
         }
 
     }
