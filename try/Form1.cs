@@ -29,7 +29,7 @@ namespace @try
             bool declareIsRight;
             ParseTree = "";
             bool expIsRight;
-            Expression.Text = Condition(out expIsRight);
+            Expression.Text = ParseStatementList(out expIsRight);
             //assignment.Text = ParseDeclaration(out declareIsRight);
             ParseTree += $"{Environment.NewLine}";
             index = 0;
@@ -227,6 +227,84 @@ namespace @try
              */
             string st = "";
             stIsRight = true;
+            bool dIsRight, ifIsRight, whileISRight, assignIsRight;
+            if (index < realTokens.Count && realTokens[index].Item1 == "KEYWORD")
+            {
+                // call one of the three: declaration || if || while
+                if (realTokens[index].Item2  == "متغير")
+                {
+                    // call declaration
+                    string de = ParseDeclaration(out dIsRight);
+                    if (dIsRight)
+                    {
+                        st = de;
+                    }
+                    else
+                    {
+                        stIsRight = false;
+                        st = $"Wrong in statement {Environment.NewLine}" +
+                                $"Problem: {de}";
+                    }
+                }
+                else if (realTokens[index].Item2 == "طالما")
+                {
+                    // call while
+                    string wh = ParseWhile(out whileISRight);
+                    if (whileISRight)
+                    {
+                        st = wh;
+                    }
+                    else
+                    {
+                        stIsRight = false;
+                        st = $"Wrong in statement {Environment.NewLine}" +
+                                $"Problem: {wh}";
+                    }
+                }
+                else if (realTokens[index].Item2 == "اذا")
+                {
+                    // call if
+                    string IF = ParseAssignment(out ifIsRight);
+                    if (ifIsRight)
+                    {
+                        st = IF;
+                    }
+                    else
+                    {
+                        stIsRight = false;
+                        st = $"Wrong in statement {Environment.NewLine}" +
+                                $"Problem: {IF}";
+                    }
+                }
+                else
+                {
+                    stIsRight = false;
+                    st = $"Wrong in statement {Environment.NewLine}" +
+                                    $"Problem: Not a known Keyword";
+                }
+
+            }
+            else if (index < realTokens.Count && realTokens[index].Item1 == "IDENT")
+            {
+                // call the assignment
+                string assign = ParseAssignment(out assignIsRight);
+                if (assignIsRight)
+                {
+                    st = assign;
+                }
+                else
+                {
+                    stIsRight = false;
+                    st = $"Wrong in statement {Environment.NewLine}" +
+                            $"Problem: {assign}";
+                }
+            }
+            else
+            {
+                stIsRight = false;
+                st = $"Wrong in statement {Environment.NewLine}" +
+                                $"Problem: Not a known statement";
+            }
             return st;
         }
         string ParseExpression(out bool expIsRight)
