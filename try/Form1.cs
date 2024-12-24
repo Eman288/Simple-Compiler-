@@ -382,7 +382,7 @@ namespace @try
             declareIsRight = true;
             bool expIsRight;
             string declare = "";
-            if (realTokens[index].Item1 == "KEYWORD")
+            if (index < realTokens.Count && realTokens[index].Item1 == "KEYWORD")
             {
                 declare += realTokens[index].Item2;
                 index += 1;
@@ -447,6 +447,118 @@ namespace @try
             
 
             return declare;
+        }
+
+        string ParseWhile(out bool whileIsRight)
+        {
+            // while rule
+            /*
+             * <while_statement> → طالما ( <condition> ) 
+             * {
+                <statement_list> 
+                }
+             */
+            whileIsRight = true;
+            string whle = "";
+            bool conIsRight, stIsRight;
+            if (index < realTokens.Count && realTokens[index].Item1 == "KEYWORD")
+            {
+                whle += realTokens[index].Item2;
+                index += 1;
+                if (index < realTokens.Count && realTokens[index].Item1 == "LPAREN")
+                {
+                    whle += realTokens[index].Item2;
+                    index += 1;
+                    string con = Condition(out conIsRight);
+                    if (conIsRight)
+                    { 
+                        whle += con;
+                        if (index < realTokens.Count && realTokens[index].Item1 == "RPAREN")
+                        {
+                            whle += realTokens[index].Item2;
+                            index += 1;
+                            if (index < realTokens.Count && realTokens[index].Item1 == "LBRACE")
+                            {
+                               whle += realTokens[index].Item2;
+                                index += 1;
+                                string st = ParseStatementList(out stIsRight);
+                                if (stIsRight)
+                                {
+                                    whle += st;
+                                    if (index < realTokens.Count && realTokens[index].Item1 == "RBRACE")
+                                    {
+                                        whle += realTokens[index].Item2;
+                                        index += 1;
+                                        // correct while loop
+                                        return whle;
+                                    }
+                                    else
+                                    {
+                                        whileIsRight = false;
+                                        whle = $"Wrong in while statment{Environment.NewLine}" +
+                                                $"Problem: Missing  RBRACE";
+                                    }
+                                }
+                                else
+                                {
+                                    whileIsRight = false;
+                                    whle = $"Wrong in while statment{Environment.NewLine}" +
+                                            $"Problem: {st}";
+                                }
+                            }
+                            else
+                            {
+
+                                whileIsRight = false;
+                                whle = $"Wrong in while statment{Environment.NewLine}" +
+                                    $"Problem: Missing LBRACE";
+                            }
+                        }
+                        else
+                        {
+                            whileIsRight = false;
+                            whle = $"Wrong in while statment{Environment.NewLine}" +
+                                    $"Problem: Missing RPAREN";
+                        }
+                    }
+                    else
+                    {
+                        whileIsRight = false;
+
+                        whle = $"Wrong in while statment{Environment.NewLine}" +
+                                $"Problem: {con}";
+                    }
+                }
+                else
+                {
+                    whileIsRight = false;
+
+                    whle = $"Wrong in while statment{Environment.NewLine}" +
+                    $"Problem: Missing LPAREN";
+                }
+            }
+            else
+            {
+                whileIsRight = false;
+                whle = $"Wrong in while statment{Environment.NewLine}" +
+                    $"Problem: Missing Keyword";
+            }
+            return whle;
+        }
+
+        string ParseIf(out bool ifIsRight)
+        {
+            // if rule
+            /*
+             * <if_statement> → اذا>) condition>) {<statement_list>}
+             */
+            ifIsRight = true;
+            return " f";
+        }
+        string ParseStatementList(out bool stateListIsRight)
+        {
+            stateListIsRight = true;
+            return " f";
         }
 
     }
