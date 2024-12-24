@@ -93,6 +93,7 @@
             this.assignment.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.assignment.Size = new System.Drawing.Size(434, 61);
             this.assignment.TabIndex = 5;
+            this.assignment.TextChanged += new System.EventHandler(this.assignment_TextChanged_1);
             // 
             // Form1
             // 
