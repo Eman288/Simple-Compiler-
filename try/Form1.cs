@@ -183,10 +183,13 @@ namespace @try
             {
                 cond += c;
                 string op = Operator(out opIsRight);
+                int j = index;
                 index += 1;
                 if (opIsRight == false) // it is a relational operator
                 {
                     cond += op;
+                    ParseTree += $"<operator> → {realTokens[j].Item2}{Environment.NewLine}";
+
                     //ParseTree += $"{Environment.NewLine}<expression> → ";
                     c = ParseExpression(out expIsRight);
                     if (expIsRight)
@@ -258,7 +261,7 @@ namespace @try
                     else
                     {
                         stIsRight = false;
-                        st = $"line 260 Wrong in statement {Environment.NewLine}" +
+                        st = $"Wrong in statement {Environment.NewLine}" +
                                 $"Problem: {wh}";
                     }
                 }
@@ -274,14 +277,14 @@ namespace @try
                     else
                     {
                         stIsRight = false;
-                        st = $"line 275 Wrong in statement {Environment.NewLine}" +
+                        st = $"Wrong in statement {Environment.NewLine}" +
                                 $"Problem: {IF}";
                     }
                 }
                 else
                 {
                     stIsRight = false;
-                    st = $"line 282 Wrong in statement {Environment.NewLine}" +
+                    st = $"Wrong in statement {Environment.NewLine}" +
                                     $"Problem: Not a known Keyword";
                 }
 
@@ -299,14 +302,14 @@ namespace @try
                 else
                 {
                     stIsRight = false;
-                    st = $"line 298 Wrong in statement {Environment.NewLine}" +
+                    st = $"Wrong in statement {Environment.NewLine}" +
                             $"Problem: {assign}";
                 }
             }
             else
             {
                 stIsRight = false;
-                st = $"line 305 Wrong in statement {Environment.NewLine}" +
+                st = $"Wrong in statement {Environment.NewLine}" +
                                 $"Problem: Not a known statement";
             }
             return st;
@@ -360,7 +363,9 @@ namespace @try
                     if (opIsRight == true)
                     {
                         code += op;
+                        int j = index;
                         index += 1;
+                        ParseTree += $"<operator> → {realTokens[j].Item2}{Environment.NewLine}";
                         //ParseTree += $"<expression> → <term> <operator> <expression>{Environment.NewLine}";
                         string s = ParseExpression(out expIsRight);
                         if (expIsRight)
@@ -600,14 +605,14 @@ namespace @try
                                     else
                                     {
                                         whileIsRight = false;
-                                        whle = $"line 578 Wrong in while statment{Environment.NewLine}" +
+                                        whle = $"Wrong in while statment{Environment.NewLine}" +
                                                 $"Problem: Missing  RBRACE";
                                     }
                                 }
                                 else
                                 {
                                     whileIsRight = false;
-                                    whle = $"line 585 Wrong in while statment{Environment.NewLine}" +
+                                    whle = $"Wrong in while statment{Environment.NewLine}" +
                                             $"Problem: {st}";
                                 }
                             }
@@ -615,14 +620,14 @@ namespace @try
                             {
 
                                 whileIsRight = false;
-                                whle = $"line 593 Wrong in while statment{Environment.NewLine}" +
+                                whle = $"Wrong in while statment{Environment.NewLine}" +
                                     $"Problem: Missing LBRACE";
                             }
                         }
                         else
                         {
                             whileIsRight = false;
-                            whle = $"line 600 Wrong in while statment{Environment.NewLine}" +
+                            whle = $"Wrong in while statment{Environment.NewLine}" +
                                     $"Problem: Missing RPAREN";
                         }
                     }
@@ -630,7 +635,7 @@ namespace @try
                     {
                         whileIsRight = false;
 
-                        whle = $"line608 Wrong in while statment{Environment.NewLine}" +
+                        whle = $"Wrong in while statment{Environment.NewLine}" +
                                 $"Problem: {con}";
                     }
                 }
@@ -638,14 +643,14 @@ namespace @try
                 {
                     whileIsRight = false;
 
-                    whle = $"line 616 Wrong in while statment{Environment.NewLine}" +
+                    whle = $"Wrong in while statment{Environment.NewLine}" +
                     $"Problem: Missing LPAREN";
                 }
             }
             else
             {
                 whileIsRight = false;
-                whle = $"line 623 Wrong in while statment{Environment.NewLine}" +
+                whle = $"Wrong in while statment{Environment.NewLine}" +
                     $"Problem: Missing Keyword";
             }
             return whle;
@@ -695,49 +700,49 @@ namespace @try
                                     else
                                     {
                                         ifIsRight = false;
-                                        ifcode = $"line 672 Wrong in if statment{Environment.NewLine}" +
+                                        ifcode = $"Wrong in if statment{Environment.NewLine}" +
                                         $"Problem: Missing RBRACE";
                                     }
                                 }
                                 else
                                 {
                                     ifIsRight = false;
-                                    ifcode = $"line 679 Wrong in if statment{Environment.NewLine}" +
+                                    ifcode = $"Wrong in if statment{Environment.NewLine}" +
                                             $"Problem: {st}";
                                 }
                             }
                             else
                             {
                                 ifIsRight = false;
-                                ifcode = $"line 686 Wrong in if statment{Environment.NewLine}" +
+                                ifcode = $"Wrong in if statment{Environment.NewLine}" +
                                 $"Problem: Missing LBRACE";
                             }
                         }
                         else
                         {
                             ifIsRight = false;
-                            ifcode = $"line 693 Wrong in if statment{Environment.NewLine}" +
+                            ifcode = $"Wrong in if statment{Environment.NewLine}" +
                                 $"Problem: Missing RPAREN";
                         }
                     }
                     else
                     {
                         ifIsRight = false;
-                        ifcode = $"line 700 Wrong in if statment{Environment.NewLine}" +
+                        ifcode = $"Wrong in if statment{Environment.NewLine}" +
                             $"Problem: {con}";
                     }
                 }
                 else
                 {
                     ifIsRight = false;
-                    ifcode = $"line 707 Wrong in if statment{Environment.NewLine}" +
+                    ifcode = $"Wrong in if statment{Environment.NewLine}" +
                          $"Problem: Missing LPAREN";
                 }
             }
             else
             {
                 ifIsRight = false;
-                ifcode = $"lisne 714Wrong in if statment{Environment.NewLine}" +
+                ifcode = $"Wrong in if statment{Environment.NewLine}" +
                     $"Problem: Missing Keyword";
             }
             return ifcode;
@@ -783,7 +788,7 @@ namespace @try
                     else
                     {
                         stateListIsRight = false;
-                        statementListCode = $"line 742 Wrong in statement List{Environment.NewLine}" +
+                        statementListCode = $"Wrong in statement List{Environment.NewLine}" +
                                                 $"Problem: {s}";
                     }
                 }
@@ -797,7 +802,7 @@ namespace @try
             else
             {
                 stateListIsRight = false;
-                statementListCode = $"line 755 Wrong in statement List{Environment.NewLine}" +
+                statementListCode = $"Wrong in statement List{Environment.NewLine}" +
                                     $"Problem: {st}";
             }
             return statementListCode;
