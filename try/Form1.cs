@@ -24,9 +24,14 @@ namespace @try
 
         private void button1_Click(object sender, EventArgs e)
         {
+            token.Text = "";
+            realTokens = new List<(string, string)>();
             GetToken(code.Text);
             bool expIsRight;
-            textBox1.Text = ParseProgram(out expIsRight);
+            ParseTree = "";
+            Parse.Text = "";
+
+            console.Text = ParseProgram(out expIsRight);
         }
         static List<(string, string)> MakeTokens(string line)
         {
@@ -143,7 +148,8 @@ namespace @try
                 if (realTokens[index].Item1 == "IDENT" || realTokens[index].Item1 == "NUM")
                 {
                     term = realTokens[index].Item2;
-                    //ParseTree += $"\n <term> => ${realTokens[index].Item1}\n${realTokens[index].Item1} => ${realTokens[index].Item2}\n";
+                    ParseTree += $"<term> → {realTokens[index].Item1}{Environment.NewLine}";
+                    ParseTree += $"{realTokens[index].Item1} → {realTokens[index].Item2}{Environment.NewLine}";
                 }
                 else
                 {
@@ -189,18 +195,23 @@ namespace @try
                     }
                     else
                     {
+                        condIsRight = false;
+
                         cond = "Wrong in condition, expression is wrong" +
                                 $"{Environment.NewLine}Problem: {c}";
                     }
                 }
                 else
                 {
+                    condIsRight = false;
+
                     cond = "Wrong in condition, operator is wrong" +
                         $"{Environment.NewLine}Problem: {op} is not a relational operator";
                 }
             }
             else
             {
+                condIsRight = false;
                 cond = "Wrong in condition, expression is wrong" +
                     $"{Environment.NewLine}Problem: {c}";
             }
@@ -316,7 +327,16 @@ namespace @try
             string term = "";
             string op = "";
 
+
             // check term
+            if (index < realTokens.Count - 1 && realTokens[index + 1].Item1 == "OPERATOR")
+            {
+                ParseTree += $"<expression> → <term> <operator> <expression>{Environment.NewLine}";
+            }else
+            {
+                ParseTree += $"<expression> → <term>{Environment.NewLine}";
+            }
+
             term = Term(out termIsRight);
             if (termIsRight == false)
             {
@@ -334,14 +354,14 @@ namespace @try
             // check if the next token is an operator or not
             if (index < realTokens.Count)
             {
-                if (realTokens[index].Item1 == "OPERATOR")
+                if (index < realTokens.Count && realTokens[index].Item1 == "OPERATOR")
                 {
                     op = Operator(out opIsRight);
                     if (opIsRight == true)
                     {
                         code += op;
                         index += 1;
-                        ParseTree += $"<expression> → <term> <operator> <expression>{Environment.NewLine}";
+                        //ParseTree += $"<expression> → <term> <operator> <expression>{Environment.NewLine}";
                         string s = ParseExpression(out expIsRight);
                         if (expIsRight)
                         {
@@ -364,13 +384,13 @@ namespace @try
                     || realTokens[index].Item1 == "ASSIGN"
                     )
                 {
-                    ParseTree += $"<expression> → <term>{Environment.NewLine}";
+                    //ParseTree += $"<expression> → <term>{Environment.NewLine}";
 
                     return code;
                 }
                 else
                 {
-                    ParseTree += $"<expression> → <term>{Environment.NewLine}";
+                    //ParseTree += $"<expression> → <term>{Environment.NewLine}";
                     expIsRight = false;
                     return code;
                 }
@@ -395,33 +415,39 @@ namespace @try
             bool expIsRight;
             string assign = "";
             
-            if (realTokens[index].Item1 == "IDENT")
+            if (index < realTokens.Count && realTokens[index].Item1 == "IDENT")
             {
+                int i = index;
                 assign += realTokens[index].Item2;
                 index += 1;
-                if (realTokens[index].Item1 == "ASSIGN")
+                if (index < realTokens.Count && realTokens[index].Item1 == "ASSIGN")
                 {
                     assign += realTokens[index].Item2;
                     index += 1;
                     //ParseTree += $"<expression> → ";
                     string check = ParseExpression(out expIsRight);
-                    if (expIsRight)
+                    if (expIsRight && check != "")
                     {
                         assign += check;
                         if (index < realTokens.Count && realTokens[index].Item1 == "SEMICOLON")
                         {
                             assign += realTokens[index].Item2;
                             index += 1;
+                            ParseTree += $"IDENT → {realTokens[i].Item2}{Environment.NewLine}";
                             return assign;
                         }
                         else
                         {
+                            assignIsRight = false;
+
                             assign = "Missing Semicolon";
                             return assign;
                         }
                     }
                     else
                     {
+                        assignIsRight = false;
+
                         if (index >= realTokens.Count || realTokens[index].Item1 != "SEMICOLON")
                         {
                             assign = "Missing Semicolon";
@@ -463,11 +489,12 @@ namespace @try
             {
                 declare += realTokens[index].Item2;
                 index += 1;
-                if (realTokens[index].Item1 == "IDENT")
+                if (index < realTokens.Count && realTokens[index].Item1 == "IDENT")
                 {
+                    int i = index;
                     declare += realTokens[index].Item2;
                     index += 1;
-                    if (realTokens[index].Item1 == "ASSIGN")
+                    if (index < realTokens.Count && realTokens[index].Item1 == "ASSIGN")
                     {
                         declare += realTokens[index].Item2;
                         index += 1;
@@ -506,6 +533,7 @@ namespace @try
                         declare = "Assign is wrong, missing '=' ";
                         return declare;
                     }
+                    ParseTree += $"IDENT → {realTokens[i].Item2}{Environment.NewLine}";
                 }
                 else
                 {
@@ -724,23 +752,24 @@ namespace @try
             string statementListCode = "";
             bool stIsRight = true;
             string st = "";
-            if (index < realTokens.Count
-                && (
-                realTokens[index].Item1 == "KEYWORD"
-                || realTokens[index].Item1 == "IDENT"
-                )
-                )
-            {
-                ParseTree += $"<statement_list> → <statement> <statement_list>{Environment.NewLine}";
-                st = Statement(out stIsRight);
-            }
-            else
-            {
-                ParseTree += $"<statement_list> → ε{Environment.NewLine}";
-                textBox2.Text = realTokens[index].Item1;
-            }
+            //if (index < realTokens.Count
+            //    && (
+            //    realTokens[index].Item1 == "KEYWORD"
+            //    || realTokens[index].Item1 == "IDENT"
+            //    )
+            //    )
+            //{
+            //    ParseTree += $"<statement_list> → <statement> <statement_list>{Environment.NewLine}";
+            //    st = Statement(out stIsRight);
+            //}
+            //else
+            //{
+            //    ParseTree += $"<statement_list> → ε{Environment.NewLine}";
+            //}
             //ParseTree += $"<statement_list> → <statement> <statement_list>{Environment.NewLine}";
             //st = Statement(out stIsRight);
+            ParseTree += $"<statement_list> → <statement> <statement_list>{Environment.NewLine}";
+            st = Statement(out stIsRight);
             if (stIsRight)
             {
                 statementListCode += st;
@@ -803,6 +832,26 @@ namespace @try
         }
 
         private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label2_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void token_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label1_Click_1(object sender, EventArgs e)
         {
 
         }
